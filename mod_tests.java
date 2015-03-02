@@ -7,7 +7,7 @@ public class mod_tests{
 	@Before
 	public void setup_mod(){
 		driver.get(cs1699test.reddit.com);
-		driver.findElement(By.linkText("logout")).click();
+		//driver.findElement(By.linkText("logout")).click();
 		driver.findElement(By.name("user")).click();
 		driver.findElement(By.name("user")).clear();
 		driver.findElement(By.name("user")).sendKeys("cs1699admin");
