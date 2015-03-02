@@ -18,17 +18,18 @@ public class sub_tests{
 	    try
 	    {
 	    	driver.findElement(By.linkText("logout")).click();
-			driver.findElement(By.name("user")).click();
+	    }
+	    catch(NoSuchElementException e)
+	   	{
+	   	}
+	   	finally{
+		   	driver.findElement(By.name("user")).click();
 			driver.findElement(By.name("user")).clear();
 			driver.findElement(By.name("user")).sendKeys("cs1699testuser");
 			driver.findElement(By.name("passwd")).click();
 			driver.findElement(By.name("passwd")).clear();
 			driver.findElement(By.name("passwd")).sendKeys("cs1699");
 			driver.findElement(By.cssSelector("button.btn")).click();
-	    }
-	    catch(NoSuchElementException e)
-	   	{
-		   
 	   	}
 	}
 
@@ -41,8 +42,8 @@ public class sub_tests{
 	public void test_subscribe(){
 		//press subsribe button
 		driver.get(baseUrl + "/r/cs1699test/");
-		driver.findElement(By.linkText("subscribe")).click();
-	    driver.get("www.reddit.com/subreddits/");
+		driver.findElement(By.xpath("//div[5]/div/span/a")).click();
+	    driver.get(baseUrl + "subreddits/");
 	    // Warning: assertTextPresent may require manual changes
 	    //assert that the subreddit is on the subreddits page
 	    assertTrue(driver.findElement(By.cssSelector("BODY")).getText().matches("^[\\s\\S]*cs1699test[\\s\\S]*$"));
@@ -52,8 +53,8 @@ public class sub_tests{
 	public void test_unsubscribe(){
 		//press unsubscribe button
 		driver.get(baseUrl + "/r/cs1699test/");
-	    driver.findElement(By.linkText("unsubscribe")).click();
-	    driver.get("www.reddit.com/subreddits");
+	    driver.findElement(By.xpath("//div[5]/div/span/a")).click();
+	    driver.get(baseUrl + "subreddits/");
 	    // Warning: assertTextNotPresent may require manual changes
 	    //assert that the subreddit isn't on the page
 	    assertFalse(driver.findElement(By.cssSelector("BODY")).getText().matches("^[\\s\\S]*cs1699test[\\s\\S]*$"));
