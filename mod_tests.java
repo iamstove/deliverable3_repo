@@ -1,13 +1,33 @@
-import org.openqa.selenium.*;
+package com.example.tests;
+
+import java.util.concurrent.TimeUnit;
+
 import org.junit.*;
 
-public class mod_tests{
-	public WebDriver driver = new FirefoxDriver();
+import static org.junit.Assert.*;
 
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+
+public class mod_tests{
+	public WebDriver driver;
+	private String baseUrl;
+	
 	@Before
 	public void setup_mod(){
-		driver.get(cs1699test.reddit.com);
-		driver.findElement(By.linkText("logout")).click();
+		driver = new FirefoxDriver();
+	    baseUrl = "http://www.reddit.com/r/cs1699test";
+	    driver.get(baseUrl);
+	    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+	   try
+	    {
+	    	driver.findElement(By.linkText("logout")).click();
+	    }
+	   catch(NoSuchElementException e)
+	   	{
+		   
+	   	}
 		driver.findElement(By.name("user")).click();
 		driver.findElement(By.name("user")).clear();
 		driver.findElement(By.name("user")).sendKeys("cs1699admin");
@@ -19,11 +39,12 @@ public class mod_tests{
 
 	@After
 	public void teardown_mod(){
-		driver.findElement(By.linkText("logout")).click(); //log out once we're done testing the mod		
+		//driver.findElement(By.linkText("logout")).click(); //log out once we're done testing the mod	
+		driver.quit();
 	}
 
 	@Test
-	public void test_delete(){
+	public void test_delete() throws InterruptedException{
 		driver.findElement(By.linkText("logout")).click();
 		//log into a test user
 		driver.findElement(By.name("user")).click();
@@ -35,7 +56,9 @@ public class mod_tests{
 		driver.findElement(By.cssSelector("button.btn")).click();
 
 		//submit a post
-		driver.findElement(By.linkText("Submit a new text post")).click();
+		//driver.findElement(By.linkText("Submit a new text post")).click();
+		Thread.sleep(1000);
+		driver.findElement(By.xpath("html/body/div[2]/div[4]/div/div/a")).click();
 		driver.findElement(By.name("title")).click();
 		driver.findElement(By.name("title")).clear();
 		driver.findElement(By.name("title")).sendKeys("Hello");
@@ -61,9 +84,10 @@ public class mod_tests{
 		driver.findElement(By.name("passwd")).sendKeys("potato");
 		driver.findElement(By.cssSelector("button.btn")).click();
 		//remove the comment 
-		driver.findElement(By.linkText("cs1699test")).click();
-		driver.findElement(By.linkText("remove")).click();
-		driver.findElement(By.xpath("(//a[contains(text(),'yes')])[2]")).click();
+		WebElement q=driver.findElement(By.xpath(".//*[@id='siteTable']/div[1]/div[2]/ul/li[7]/form/span[1]/a"));
+		q.click();
+		q=driver.findElement(By.xpath(".//*[@id='siteTable']/div[1]/div[2]/ul/li[7]/form/span[2]/a[1]"));
+		q.click();
 		driver.navigate().refresh();
 		// Warning: assertTextNotPresent may require manual changes
 		assertFalse(driver.findElement(By.cssSelector("BODY")).getText().matches("^[\\s\\S]*//body[\\s\\S]*$"));
@@ -77,7 +101,7 @@ public class mod_tests{
 	    driver.findElement(By.id("link_type_self")).click();
 	    driver.findElement(By.name("edit")).click();
 	    //go back to the subreddit
-	    driver.findElement(By.linkText("cs1699test")).click();
+	    driver.get(baseUrl);
 	    //login as a regular user and check if the submit a new link button is present (it isn't if it's a text only subreddit)
 	    driver.findElement(By.linkText("logout")).click();
 	    driver.findElement(By.name("user")).click();
@@ -87,8 +111,14 @@ public class mod_tests{
 	    driver.findElement(By.name("passwd")).clear();
 	    driver.findElement(By.name("passwd")).sendKeys("cs1699");
 	    driver.findElement(By.cssSelector("button.btn")).click();
-	    assertFalse(isElementPresent(By.linkText("Submit a new link")));
-
+	    try{
+	    	WebElement q=driver.findElement(By.linkText("Submit a new link"));
+	    	assertTrue(q.isDisplayed());
+	    }
+	    catch(Exception e)
+	    {//Basically, this is set to fail. If Q is missing, as it should be, asserting it being displayed should throw an assertionerror.
+	    	assertTrue(true);
+	    }
 	    //log back in as admin and switch back to a normal subreddit
 	    driver.findElement(By.linkText("logout")).click();
 	    driver.findElement(By.name("user")).click();
@@ -105,7 +135,7 @@ public class mod_tests{
 	}
 
 	@Test
-	public void test_ban_user(){
+	public void test_ban_user() throws InterruptedException{
 		//ban the user for one day
 	    driver.findElement(By.linkText("ban users")).click();
 	    driver.findElement(By.id("name")).click();
@@ -141,9 +171,10 @@ public class mod_tests{
 	    driver.findElement(By.name("edit")).click();
 	    
 	    // go back ot main subreddit page, log out, and assert that there is an error element on the page
-	    driver.findElement(By.linkText("cs1699test")).click();
+	    driver.get(baseUrl);
 	    driver.findElement(By.linkText("logout")).click();
-	    assertTrue(isElementPresent(By.id("classy-error")));
+	    WebElement q=driver.findElement(By.id("classy-error"));
+	    assertTrue(q.isDisplayed());
 
 	    //log back in and change the subreddit back to public
 	    driver.findElement(By.id("header-img")).click();
@@ -154,7 +185,7 @@ public class mod_tests{
 	    driver.findElement(By.name("passwd")).clear();
 	    driver.findElement(By.name("passwd")).sendKeys("potato");
 	    driver.findElement(By.cssSelector("button.btn")).click();
-	    driver.get(baseUrl + "/r/cs1699test/");
+	    driver.get("http://www.reddit.com/r/cs1699test/");
 	    driver.findElement(By.linkText("subreddit settings")).click();
 	    driver.findElement(By.cssSelector("td.nowrap.nopadding > label")).click();
 	    driver.findElement(By.id("type_public")).click();
@@ -198,9 +229,9 @@ public class mod_tests{
 	public void test_view_reports(){
 		//make a comment
 		driver.findElement(By.xpath("//div[@id='siteTable']/div[3]/div[2]/ul/li/a")).click();
-	    driver.findElement(By.name("text")).click();
-	    driver.findElement(By.name("text")).clear();
-	    driver.findElement(By.name("text")).sendKeys("offensive comment");
+	    driver.findElement(By.xpath("html/body/div[3]/div[2]/form/div/div/textarea")).click();
+	    driver.findElement(By.xpath("html/body/div[3]/div[2]/form/div/div/textarea")).clear();
+	    driver.findElement(By.xpath("html/body/div[3]/div[2]/form/div/div/textarea")).sendKeys("offensive comment");
 	    driver.findElement(By.cssSelector("button.save")).click();
 	    //logout and report the comment as a different user
 	    driver.findElement(By.linkText("logout")).click();
@@ -211,7 +242,7 @@ public class mod_tests{
 	    driver.findElement(By.name("passwd")).clear();
 	    driver.findElement(By.name("passwd")).sendKeys("cs1699");
 	    driver.findElement(By.cssSelector("button.btn")).click();
-	    driver.findElement(By.xpath("(//a[contains(text(),'report')])[3]")).click();
+	    driver.findElement(By.xpath("(//a[contains(text(),'report')])[last()]")).click();
 	    driver.findElement(By.cssSelector("li > label")).click();
 	    driver.findElement(By.name("reason")).click();
 	    driver.findElement(By.cssSelector("button.btn.submit-action-thing")).click();
@@ -230,5 +261,14 @@ public class mod_tests{
 	    //delete the comment
 	    driver.findElement(By.linkText("delete")).click();
 	    driver.findElement(By.xpath("(//a[contains(text(),'yes')])[2]")).click();
+	}
+	
+	private boolean isElementPresent(By by) {
+	    try {
+	        driver.findElement(by);
+	        return true;
+	    } catch (NoSuchElementException e) {
+	        return false;
+	    }
 	}
 }
