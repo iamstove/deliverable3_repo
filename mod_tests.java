@@ -19,7 +19,7 @@ public class mod_tests{
 		driver = new FirefoxDriver();
 	    baseUrl = "http://www.reddit.com/r/cs1699test";
 	    driver.get(baseUrl);
-	    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+	    driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
 	   try
 	    {
 	    	driver.findElement(By.linkText("logout")).click();
@@ -29,13 +29,13 @@ public class mod_tests{
 		   
 	   	}
 	   	finally{
-		driver.findElement(By.name("user")).click();
-		driver.findElement(By.name("user")).clear();
-		driver.findElement(By.name("user")).sendKeys("cs1699admin");
-		driver.findElement(By.name("passwd")).click();
-		driver.findElement(By.name("passwd")).clear();
-		driver.findElement(By.name("passwd")).sendKeys("potato");
-		driver.findElement(By.cssSelector("button.btn")).click();
+			driver.findElement(By.name("user")).click();
+			driver.findElement(By.name("user")).clear();
+			driver.findElement(By.name("user")).sendKeys("cs1699admin");
+			driver.findElement(By.name("passwd")).click();
+			driver.findElement(By.name("passwd")).clear();
+			driver.findElement(By.name("passwd")).sendKeys("potato");
+			driver.findElement(By.cssSelector("button.btn")).click();
 		}
 	}
 
@@ -163,36 +163,7 @@ public class mod_tests{
 	    driver.findElement(By.linkText("yes")).click();
 	}
 
-	@Test
-	public void test_private(){
-		
-		//make subreddit private
-	    driver.findElement(By.linkText("subreddit settings")).click();
-	    driver.findElement(By.xpath("//div[@id='sr-form']/div[6]/div/div/table/tbody/tr[3]/td/label")).click();
-	    driver.findElement(By.id("type_private")).click();
-	    driver.findElement(By.name("edit")).click();
-	    
-	    // go back ot main subreddit page, log out, and assert that there is an error element on the page
-	    driver.get(baseUrl);
-	    driver.findElement(By.linkText("logout")).click();
-	    WebElement q=driver.findElement(By.id("classy-error"));
-	    assertTrue(q.isDisplayed());
-
-	    //log back in and change the subreddit back to public
-	    driver.findElement(By.id("header-img")).click();
-	    driver.findElement(By.name("user")).click();
-	    driver.findElement(By.name("user")).clear();
-	    driver.findElement(By.name("user")).sendKeys("cs1699admin");
-	    driver.findElement(By.name("passwd")).click();
-	    driver.findElement(By.name("passwd")).clear();
-	    driver.findElement(By.name("passwd")).sendKeys("potato");
-	    driver.findElement(By.cssSelector("button.btn")).click();
-	    driver.get("http://www.reddit.com/r/cs1699test/");
-	    driver.findElement(By.linkText("subreddit settings")).click();
-	    driver.findElement(By.cssSelector("td.nowrap.nopadding > label")).click();
-	    driver.findElement(By.id("type_public")).click();
-	    driver.findElement(By.name("edit")).click();
-	}
+	
 
 	@Test
 	public void test_delete_comment(){
@@ -206,10 +177,10 @@ public class mod_tests{
 	    driver.findElement(By.name("passwd")).sendKeys("cs1699");
 	    driver.findElement(By.cssSelector("button.btn")).click();
 	    //make a comment
-	    driver.findElement(By.xpath("//div[@id='siteTable']/div[3]/div[2]/ul/li/a")).click();
-	    driver.findElement(By.name("text")).click();
-	    driver.findElement(By.name("text")).clear();
-	    driver.findElement(By.name("text")).sendKeys("I'm commenting!");
+	    driver.findElement(By.xpath("//div[@id='siteTable']/div[last()-1]/div[2]/ul/li/a")).click();
+	    driver.findElement(By.xpath("html/body/div[3]/div[2]/form/div/div/textarea")).click();
+	    driver.findElement(By.xpath("html/body/div[3]/div[2]/form/div/div/textarea")).clear();
+	    driver.findElement(By.xpath("html/body/div[3]/div[2]/form/div/div/textarea")).sendKeys("I'm commenting!");
 	    driver.findElement(By.cssSelector("button.save")).click();
 	    //login as admin and delete the comment
 	    driver.findElement(By.linkText("logout")).click();
@@ -230,7 +201,7 @@ public class mod_tests{
 	@Test
 	public void test_view_reports(){
 		//make a comment
-		driver.findElement(By.xpath("//div[@id='siteTable']/div[3]/div[2]/ul/li/a")).click();
+		driver.findElement(By.xpath("//div[@id='siteTable']/div[last()-1]/div[2]/ul/li/a")).click();
 	    driver.findElement(By.xpath("html/body/div[3]/div[2]/form/div/div/textarea")).click();
 	    driver.findElement(By.xpath("html/body/div[3]/div[2]/form/div/div/textarea")).clear();
 	    driver.findElement(By.xpath("html/body/div[3]/div[2]/form/div/div/textarea")).sendKeys("offensive comment");
@@ -263,6 +234,37 @@ public class mod_tests{
 	    //delete the comment
 	    driver.findElement(By.linkText("delete")).click();
 	    driver.findElement(By.xpath("(//a[contains(text(),'yes')])[2]")).click();
+	}
+	
+	@Test
+	public void test_private(){
+		
+		//make subreddit private
+	    driver.findElement(By.linkText("subreddit settings")).click();
+	    driver.findElement(By.xpath("//div[@id='sr-form']/div[6]/div/div/table/tbody/tr[3]/td/label")).click();
+	    driver.findElement(By.id("type_private")).click();
+	    driver.findElement(By.name("edit")).click();
+	    
+	    // go back ot main subreddit page, log out, and assert that there is an error element on the page
+	    driver.get(baseUrl);
+	    driver.findElement(By.xpath(".//*[@id='header-bottom-right']/form/a")).click();
+	    WebElement q=driver.findElement(By.id("classy-error"));
+	    assertTrue(q.isDisplayed());
+
+	    //log back in and change the subreddit back to public
+	    driver.findElement(By.id("header-img")).click();
+	    driver.findElement(By.name("user")).click();
+	    driver.findElement(By.name("user")).clear();
+	    driver.findElement(By.name("user")).sendKeys("cs1699admin");
+	    driver.findElement(By.name("passwd")).click();
+	    driver.findElement(By.name("passwd")).clear();
+	    driver.findElement(By.name("passwd")).sendKeys("potato");
+	    driver.findElement(By.cssSelector("button.btn")).click();
+	    driver.get("http://www.reddit.com/r/cs1699test/");
+	    driver.findElement(By.linkText("subreddit settings")).click();
+	    driver.findElement(By.cssSelector("td.nowrap.nopadding > label")).click();
+	    driver.findElement(By.id("type_public")).click();
+	    driver.findElement(By.name("edit")).click();
 	}
 	
 	private boolean isElementPresent(By by) {
