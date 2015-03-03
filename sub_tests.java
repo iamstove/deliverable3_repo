@@ -22,7 +22,7 @@ public class sub_tests{
 	    catch(NoSuchElementException e)
 	   	{
 	   	}
-	   	finally{
+	   	finally{ //whether or not the try catch fails, were here.
 		   	driver.findElement(By.name("user")).click();
 			driver.findElement(By.name("user")).clear();
 			driver.findElement(By.name("user")).sendKeys("cs1699testuser");
