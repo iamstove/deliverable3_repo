@@ -16,7 +16,6 @@ public class mod_tests{
 	
 	@Before
 	public void setup_mod(){
-<<<<<<< HEAD
 		driver = new FirefoxDriver();
 	    baseUrl = "http://www.reddit.com/r/cs1699test";
 	    driver.get(baseUrl);
@@ -29,10 +28,7 @@ public class mod_tests{
 	   	{
 		   
 	   	}
-=======
-		driver.get(cs1699test.reddit.com);
-		//driver.findElement(By.linkText("logout")).click();
->>>>>>> fbcc75408a4a67f13a7cad7eff067b0794276586
+	   	finally{
 		driver.findElement(By.name("user")).click();
 		driver.findElement(By.name("user")).clear();
 		driver.findElement(By.name("user")).sendKeys("cs1699admin");
@@ -40,6 +36,7 @@ public class mod_tests{
 		driver.findElement(By.name("passwd")).clear();
 		driver.findElement(By.name("passwd")).sendKeys("potato");
 		driver.findElement(By.cssSelector("button.btn")).click();
+		}
 	}
 
 	@After
